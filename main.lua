@@ -108,7 +108,10 @@ end
 Lotus.process_loc_text()
 
 -- FUCK this man i hate balatro ui
-G.FUNCS.restartthegameeedude = function () SMODS.restart_game() end
+G.FUNCS.restartthegameeedude = function ()
+    SMODS.save_mod_config(Lotus)
+    SMODS.restart_game()
+end
 Lotus.config_tab = function()
     return {
         n = G.UIT.ROOT,
