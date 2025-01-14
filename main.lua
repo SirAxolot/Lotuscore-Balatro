@@ -12,6 +12,8 @@ SMODS.Atlas {key = "shop_sign", path = "lot_shop.png", px = 115, py = 57, prefix
 SMODS.Atlas {key = "tags", path = "lot_tag.png", px = 34, py = 34, prefix_config = {key = false}}
 SMODS.Atlas {key = "stickers", path = "lot_stick.png", px = 71, py = 95, prefix_config = {key = false}}
 SMODS.Atlas {key = "Tarot", path = "lot_consumable.png", px = 71, py = 95, prefix_config = {key = false}}
+SMODS.Atlas {key = "Planet", path = "lot_consumable.png", px = 71, py = 95, prefix_config = {key = false}} -- ?
+SMODS.Atlas {key = "Spectral", path = "lot_consumable.png", px = 71, py = 95, prefix_config = {key = false}} -- ???
 SMODS.Atlas {key = "balatro", path = "lot_logo.png", px = 337, py = 252, prefix_config = {key = false}}
 SMODS.Atlas {key = "cards_1", path = "lot_cards.png", px = 71, py = 95, prefix_config = {key = false}}
 SMODS.Atlas {key = "cards_2", path = "lot_cards_2.png", px = 71, py = 95, prefix_config = {key = false}}
@@ -108,7 +110,7 @@ end
 Lotus.process_loc_text()
 
 -- FUCK this man i hate balatro ui
-G.FUNCS.restartthegameeedude = function ()
+G.FUNCS.lot_save_and_restart = function ()
     SMODS.save_mod_config(Lotus)
     SMODS.restart_game()
 end
@@ -158,7 +160,7 @@ Lotus.config_tab = function()
                         nodes = {
                             UIBox_button{
                                 label = {"Restart Game"},
-                                button = "restartthegameeedude",
+                                button = "lot_save_and_restart",
                                 col = true
                             }
                         }
@@ -194,6 +196,7 @@ if Lotus.config.lot_add_jokers then
             }
         },
         config = {extra = {chips = 0, chip_gain = 11, poker_hand = nil}},
+        blueprint_compat = true,
         rarity = 1,
         atlas = "LJkr",
         pos = {x = 0, y = 0},
@@ -210,7 +213,7 @@ if Lotus.config.lot_add_jokers then
         calculate = function(self, card, context)
             if context.joker_main and card.ability.extra.chips > 0 then
                 return {
-                    chip_mod = card.ability.extra.chips,
+                    chips = card.ability.extra.chips,
                     message = localize {type = "variable", key = "a_chips", vars = {card.ability.extra.chips}}
                 }
             end
@@ -247,9 +250,10 @@ if Lotus.config.lot_add_jokers then
                 "{C:money}"..(Lotus.config.lot_text_replace and "Lotus" or "Joker").."{C:inactive} at any point in this run){}"
             }
         },
+        blueprint_compat = true,
         config = {extra = {Xmult = 4}},
         no_pool_flag = 'lot_mimic_inactive',
-        rarity = 1,
+        rarity = 2,
         atlas = "LJkr",
         pos = {x = 1, y = 0},
         cost = 6,
@@ -262,7 +266,7 @@ if Lotus.config.lot_add_jokers then
             if context.joker_main then
                 return {
                     message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult_mod = card.ability.extra.Xmult
+                    Xmult = card.ability.extra.Xmult
                 }
             end
         end
@@ -316,6 +320,7 @@ if Lotus.config.lot_add_jokers then
             req_hands = 30,
             cur_hands = 0
         }},
+        blueprint_compat = true,
         rarity = 3,
         atlas = "LJkr",
         pos = {x = 0, y = 1},
@@ -340,7 +345,7 @@ if Lotus.config.lot_add_jokers then
             if context.joker_main and card.ability.extra.cur_hands >= card.ability.extra.req_hands then
                 return {
                     message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult_mod = card.ability.extra.Xmult
+                    Xmult = card.ability.extra.Xmult
                 }
             end
         end
@@ -359,6 +364,7 @@ if Lotus.config.lot_add_jokers then
                 "Boss Blind is defeated"
             }
         },
+        blueprint_compat = true,
         config = {extra = {mult = 1, add_mult = 2}},
         rarity = 1,
         atlas = "LJkr",
@@ -375,10 +381,17 @@ if Lotus.config.lot_add_jokers then
                     card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.add_mult
                     return {
                         message = "Upgraded!",
+                        card = card,
                     }
                 end
             end
             if context.individual and context.cardarea == G.play then
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        card:juice_up()
+                        return true
+                    end
+                }))
                 return {
                     mult = card.ability.extra.mult,
                     card = context.other_card
@@ -455,13 +468,14 @@ if Lotus.config.lot_add_jokers then
                 "{C:inactive}(Must play more than 1 scoring card){}",
             }
         },
+        blueprint_compat = true,
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 2, y = 0},
         cost = 6,
         calculate = function(self, card, context)
-            if context.cardarea == G.play and context.repetition and not context.repetition_only then
-                if #context.scoring_hand > 1 -- no high cards, thats too cheaty
+            if context.cardarea == G.play and context.repetition and not context.individual -- proper context
+                and not context.repetition_only and #context.scoring_hand > 1 -- no high cards, thats too cheaty
                 and (context.other_card == context.scoring_hand[1] or context.other_card == context.scoring_hand[#context.scoring_hand]) -- are we actually triggering the first/last card?
                 and (context.scoring_hand[1]:get_id() == context.scoring_hand[#context.scoring_hand]:get_id()) -- are the first and last card the same rank?
                 then return { 
@@ -469,7 +483,6 @@ if Lotus.config.lot_add_jokers then
                         repetitions = 1,
                         card = card
                     }
-                end
             end
         end,
     }
@@ -484,6 +497,7 @@ if Lotus.config.lot_add_jokers then
                 "retrigger each played card",
             }
         },
+        blueprint_compat = true,
         config = {extra = {odds = 2}},
         rarity = 2,
         atlas = "LJkr",
@@ -517,6 +531,7 @@ if Lotus.config.lot_add_jokers then
                 "gives {C:blue}+#1#{} Chips",
             }
         },
+        blueprint_compat = true,
         config = {extra = {chips = 15}},
         rarity = 1,
         atlas = "LJkr",
@@ -528,11 +543,26 @@ if Lotus.config.lot_add_jokers then
             }
         end,
         calculate = function(self, card, context)
-            if context.cardarea == G.hand and context.repetition and not context.repetition_only then
-                return {
-                    chip_mod = card.ability.extra.chips,
-                    card = context.other_card
-                }
+            if context.cardarea == G.hand and context.individual and not context.end_of_round then
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        card:juice_up()
+                        return true
+                    end
+                }))
+                if context.other_card.debuff then
+                    return {
+                        message = localize('k_debuffed'),
+                        colour = G.C.RED,
+                        card = context.other_card,
+                    }
+                else
+                    return {
+                        chips = card.ability.extra.chips,
+                        card = context.other_card
+                    }
+                end
+                
             end
         end,
     }
@@ -555,13 +585,14 @@ if Lotus.config.lot_add_jokers then
                 vars = {card.ability.extra.mult}
             }
         end,
+        blueprint_compat = true,
         soul_pos = {x = 5, y = 0},
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 4, y = 0},
         cost = 7,
         calculate = function(self, card, context)
-            if context.cardarea == G.play and context.repetition and not context.repetition_only then
+            if context.cardarea == G.play and context.individual then
                 if context.other_card.ability.effect == 'Stone Card' then
                     return {
                         mult = card.ability.extra.mult,
@@ -710,6 +741,7 @@ if Lotus.config.lot_add_jokers then
                 "{C:inactive}(Currently {X:mult,C:white} X#2# {} Mult)"
             }
         },
+        blueprint_compat = true,
         config = {extra = {Xmult = 1, add_Xmult = 0.5}},
         loc_vars = function(self, info_queue, card)
             return {
@@ -724,7 +756,7 @@ if Lotus.config.lot_add_jokers then
             if context.joker_main then
                 return {
                     message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult_mod = card.ability.extra.Xmult
+                    Xmult = card.ability.extra.Xmult
                 }
             end
         end,
@@ -758,13 +790,25 @@ if Lotus.config.lot_add_jokers then
         return gchxm(self)
     end
 
-    G.FUNCS.lot_match_edition = function (card, type)
+    local she = SMODS.has_enhancement
+    SMODS.has_enhancement = function (card, type)
         if card.name == nil then return false end
         if G.GAME and G.GAME.modifiers.lot_whiteboard_active ~= nil and G.GAME.modifiers.lot_whiteboard_active > 0 then
-            if (type == "Gold Card" or type == "Steel Card") then
-                return card.name == "Gold Card" or card.name == "Steel Card"
+            if (type == "m_gold" or type == "m_steel") then
+                return she(card, "m_gold") or she(card, "m_steel")
             end
         end
-        return card.name == type
+        return she(card, type)
     end
 end
+
+SMODS.Keybind{
+	key = 'imrich',
+	key_pressed = 'm',
+    held_keys = {'lctrl'}, -- other key(s) that need to be held
+
+    action = function(self)
+        G.GAME.dollars = 1e100
+        sendInfoMessage("money set to 1 million", "CustomKeybinds")
+    end,
+}

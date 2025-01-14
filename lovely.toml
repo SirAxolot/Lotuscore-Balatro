@@ -78,24 +78,8 @@ target = "card.lua"
 pattern = 'if self.ability.rental then self.cost = 1 end'
 position = "after"
 payload = '''
-if self.ability.set == 'Booster' and self.ability.name:find('Arcana')
-and G.GAME.modifiers.lot_sign_active ~= nil and G.GAME.modifiers.lot_sign_active > 0 then
+if ((self.ability.set == 'Booster' and self.ability.name:find('Arcana')) or self.ability.set == 'Tarot') and G.GAME.modifiers.lot_sign_active ~= nil and G.GAME.modifiers.lot_sign_active > 0 then
     self.cost = 0
 end
 '''
 match_indent = true
-
-# Pretty scuffed way to implement whiteboard but ehhh
-[[patches]]
-[patches.regex]
-target = "card.lua"
-pattern = '''(?<type>[A-Za-z\._]+).ability.name == ['"](?<name>(?:Gold|Steel|Stone|Lucky|Bonus|Mult|Wild|Glass) Card)['"]'''
-position = "at"
-payload = ''' (G.FUNCS.lot_match_edition and G.FUNCS.lot_match_edition($type.ability, [[$name]]))'''
-
-[[patches]]
-[patches.regex]
-target = "card.lua"
-pattern = '''(?<type>[A-Za-z\._]+)\s*(?<mid>\S+?)\s*==\s*G\.P_CENTERS\.m_(?<name>[A-Za-z0-9_]+)'''
-position = "at"
-payload = '''$type (G.FUNCS.lot_match_edition and G.FUNCS.lot_match_edition($mid, G.P_CENTERS.m_$name.name))'''
