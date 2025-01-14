@@ -108,7 +108,7 @@ end
 Lotus.process_loc_text()
 
 -- FUCK this man i hate balatro ui
-
+G.FUNCS.restartthegameeedude = function () SMODS.restart_game() end
 Lotus.config_tab = function()
     return {
         n = G.UIT.ROOT,
@@ -137,20 +137,27 @@ Lotus.config_tab = function()
                         n = G.UIT.R,
                         config = {align = "cm", padding = 0},
                         nodes = {
-                            create_toggle(
-                                {
-                                    label = "Enable Lotus Text Replacement",
-                                    ref_table = Lotus.config,
-                                    ref_value = "lot_text_replace",
-                                }
-                            ),
-                            create_toggle(
-                                {
-                                    label = "Enable Modded Lotuses",
-                                    ref_table = Lotus.config,
-                                    ref_value = "lot_add_jokers",
-                                }
-                            )
+                            create_toggle {
+                                label = "Enable Lotus Text Replacement",
+                                ref_table = Lotus.config,
+                                ref_value = "lot_text_replace",
+                            },
+                            create_toggle {
+                                label = "Enable Modded Lotuses",
+                                ref_table = Lotus.config,
+                                ref_value = "lot_add_jokers",
+                            }
+                        }
+                    },
+                    {
+                        n = G.UIT.R,
+                        config = {align = "cm", padding = 0.03},
+                        nodes = {
+                            UIBox_button{
+                                label = {"Restart Game"},
+                                button = "restartthegameeedude",
+                                col = true
+                            }
                         }
                     }
                 }
