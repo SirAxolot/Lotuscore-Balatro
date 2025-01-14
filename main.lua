@@ -801,14 +801,3 @@ if Lotus.config.lot_add_jokers then
         return she(card, type)
     end
 end
-
-SMODS.Keybind{
-	key = 'imrich',
-	key_pressed = 'm',
-    held_keys = {'lctrl'}, -- other key(s) that need to be held
-
-    action = function(self)
-        G.GAME.dollars = 1e100
-        sendInfoMessage("money set to 1 million", "CustomKeybinds")
-    end,
-}
