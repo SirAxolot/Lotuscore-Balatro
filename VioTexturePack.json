@@ -1,0 +1,14 @@
+{
+	"id": "VioTexturePack",
+	"name": "The Lotus Mod",
+	"display_name": "Lotuscore",
+	"author": ["_VioMarks_", "strudelfatpaws"],
+	"description": "ohhh yeah its lotus time babeyyy yeaaah woo yeah oh yeah yeah woo",
+	"prefix": "lotus",
+	"main_file": "main.lua",
+	"priority": 0,
+	"badge_colour": "FFFFFF",
+	"badge_text_colour": "000000",
+	"version": "2.0.0",
+	"dependencies": []
+}

@@ -1,0 +1,1 @@
+return {["lot_text_replace"]=false,["lot_add_jokers"]=false,}
