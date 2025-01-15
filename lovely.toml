@@ -36,7 +36,7 @@ target = "card.lua"
 pattern = 'if center.name == "Wee Joker" and (center.discovered or self.bypass_discovery_center) then'
 position = "before"
 payload = '''
-if center.name == "lot_floppy" and (center.discovered or self.bypass_discovery_center) then 
+if center.name == "floppy_disk" and (center.discovered or self.bypass_discovery_center) then 
     H = W
     self.T.h = H
 end
@@ -51,7 +51,7 @@ target = "card.lua"
 pattern = "if _center.name == 'Photograph' and (_center.discovered or self.bypass_discovery_center) then"
 position = "before"
 payload = '''
-if _center.name == 'lot_floppy' and (_center.discovered or self.bypass_discovery_center) then
+if _center.name == 'floppy_disk' and (_center.discovered or self.bypass_discovery_center) then
     self.children.center.scale.y = self.children.center.scale.x
     self.children.center.scale.x = self.children.center.scale.x
 end
@@ -65,7 +65,7 @@ target = "card.lua"
 pattern = 'elseif self.config.center.name == "Wee Joker" then'
 position = "before"
 payload = '''
-elseif self.config.center.name == "lot_floppy" then 
+elseif self.config.center.name == "floppy_disk" then 
     H = W
     self.T.h = H*scale
     self.T.w = W*scale

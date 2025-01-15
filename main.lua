@@ -107,8 +107,6 @@ Lotus.process_loc_text = function()
     G.localization.descriptions.Joker.j_hologram.text[5] = "{C:inactive}(no longer visually bugged! :D){}"
 end
 
-Lotus.process_loc_text()
-
 -- FUCK this man i hate balatro ui
 G.FUNCS.lot_save_and_restart = function ()
     SMODS.save_mod_config(Lotus)
@@ -183,18 +181,8 @@ end
 -- new jokers
 if Lotus.config.lot_add_jokers then
     SMODS.Joker {
-        key = "lot_funnyman",
-        name = "lot_funnyman",
-        loc_txt = {
-            name = "Funnyman",
-            text = {
-                "Gains {C:chips}+#2#{} Chips if",
-                "played hand is a",
-                "{C:money}#3#{}, hand changes",
-                "every round",
-                "{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)"
-            }
-        },
+        key = "funnyman",
+        name = "funnyman",
         config = {extra = {chips = 0, chip_gain = 11, poker_hand = nil}},
         blueprint_compat = true,
         rarity = 1,
@@ -241,16 +229,8 @@ if Lotus.config.lot_add_jokers then
     }, true)
 
     SMODS.Joker {
-        key = "lot_mimic",
-        name = "lot_mimic",
-        loc_txt = {
-            name = "Mimic",
-            text = {
-                "{X:mult,C:white} X#1# {} Mult",
-                "{C:inactive}(Only appears if you've owned",
-                "{C:money}"..(Lotus.config.lot_text_replace and "Lotus" or "Joker").."{C:inactive} at any point in this run){}"
-            }
-        },
+        key = "mimic",
+        name = "mimic",
         config = {extra = {x_mult = 4}},
         blueprint_compat = true,
         no_pool_flag = 'lot_mimic_inactive',
@@ -259,6 +239,7 @@ if Lotus.config.lot_add_jokers then
         pos = {x = 1, y = 0},
         cost = 6,
         loc_vars = function(self, info_queue, card)
+            info_queue[#info_queue + 1] = G.P_CENTERS.j_joker
             return {
                 vars = {card.ability.extra.x_mult}
             }
@@ -274,16 +255,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_fork",
-        name = "lot_fork",
-        loc_txt = {
-            name = "I'm a Fork",
-            text = {
-                "Creates a {C:blue}Spectral Card{}",
-                "when {C:money}Boss Blind{} is defeated",
-                "{C:inactive}(Must have room){}",
-            }
-        },
+        key = "fork",
+        name = "fork",
         blueprint_compat = false,
         rarity = 3,
         atlas = "LJkr",
@@ -313,17 +286,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_lockpick",
-        name = "lot_lockpick",
-        loc_txt = {
-            name = "Lockpicker",
-            text = {
-                "{X:mult,C:white} X#1# {} Mult",
-                "Only active after",
-                "playing {C:money}#2#{} Hands",
-                "{C:inactive}(#3#){}",
-            }
-        },
+        key = "lockpick",
+        name = "lockpick",
         config = {extra = {x_mult = 5, req_hands = 30, cur_hands = 0}},
         blueprint_compat = true,
         rarity = 3,
@@ -358,17 +322,8 @@ if Lotus.config.lot_add_jokers then
 
 
     SMODS.Joker {
-        key = "lot_floppy",
-        name = "lot_floppy",
-        loc_txt = {
-            name = "Floppy Disk",
-            text = {
-                "Played cards give",
-                "{C:mult}+#1#{} Mult when scoring",
-                "Increases by {C:mult}+#2#{} when",
-                "Boss Blind is defeated"
-            }
-        },
+        key = "floppy_disk",
+        name = "floppy_disk",
         config = {extra = {mult = 1, add_mult = 2}},
         blueprint_compat = true,
         rarity = 1,
@@ -406,15 +361,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_sign",
-        name = "lot_sign",
-        loc_txt = {
-            name = "Road Sign",
-            text = {
-                "{C:purple}Arcana Packs{} and {C:purple}Tarot Cards{}",
-                "in the shop are {C:money}free{}",
-            }
-        },
+        key = "sign",
+        name = "sign",
         blueprint_compat = false,
         rarity = 2,
         atlas = "LJkr",
@@ -432,15 +380,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_white",
-        name = "lot_white",
-        loc_txt = {
-            name = "Whiteboard",
-            text = {
-                "{C:money}Steel Cards{} and {C:money}Gold Cards{}",
-                "count as the same enhancement",
-            }
-        },
+        key = "white",
+        name = "white",
         blueprint_compat = false,
         rarity = 2,
         atlas = "LJkr",
@@ -460,17 +401,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_armed",
-        name = "lot_armed",
-        loc_txt = {
-            name = "Armed and Dangerous",
-            text = {
-                "Retrigger {C:money}first{} and {C:money}last{}",
-                "played cards if they",
-                "have the same rank",
-                "{C:inactive}(Must play more than 1 scoring card){}",
-            }
-        },
+        key = "armed",
+        name = "armed",
         blueprint_compat = true,
         rarity = 2,
         atlas = "LJkr",
@@ -491,15 +423,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_gun",
-        name = "lot_gun",
-        loc_txt = {
-            name = "Shotgun",
-            text = {
-                "{C:green}#1# in #2#{} chance to",
-                "retrigger each played card",
-            }
-        },
+        key = "gun",
+        name = "gun",
         config = {extra = {odds = 2}},
         blueprint_compat = true,
         rarity = 2,
@@ -513,7 +438,7 @@ if Lotus.config.lot_add_jokers then
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.repetition and not context.repetition_only then
-                if pseudorandom('lot_gun') < G.GAME.probabilities.normal / card.ability.extra.odds then
+                if pseudorandom("gun") < G.GAME.probabilities.normal / card.ability.extra.odds then
                     return { 
                         message = 'Fired!',
                         repetitions = 1,
@@ -525,15 +450,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_slop",
-        name = "lot_slop",
-        loc_txt = {
-            name = "Slop Addiction",
-            text = {
-                "Each card in hand",
-                "gives {C:blue}+#1#{} Chips",
-            }
-        },
+        key = "slop",
+        name = "slop",
         config = {extra = {chips = 15}},
         blueprint_compat = true,
         rarity = 1,
@@ -571,15 +489,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_dream",
-        name = "lot_dream",
-        loc_txt = {
-            name = "Dream Rotation",
-            text = {
-                "Played {C:money}Stone Cards{} give",
-                "{C:mult}+#1#{} Mult when scored"
-            }
-        },
+        key = "dream",
+        name = "dream",
         config = {extra = {mult = 10}},
         blueprint_compat = true,
         soul_pos = {x = 5, y = 0},
@@ -607,15 +518,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_soy",
-        name = "lot_soy",
-        loc_txt = {
-            name = "Soy Sauce",
-            text = {
-                "{C:money}$#1#{} at end of round,",
-                "Decreases by {C:mult}-$#2#{} each round"
-            }
-        },
+        key = "soy",
+        name = "soy",
         config = {extra = {init_money = 8, money = 8, sub = 2}},
         blueprint_compat = false,
         rarity = 1,
@@ -660,16 +564,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = "lot_fisher",
-        name = "lot_fisher",
-        loc_txt = {
-            name = "Fishy Lotus",
-            text = {
-                "{C:green}#1# in #2#{} chance to add",
-                "{C:money}Foil{}, {C:money}Holographic{}, or {C:money}Polychrome{}",
-                "to each scoring card."
-            }
-        },
+        key = "fisher",
+        name = "fisher",
         config = {extra = {odds = 100}},
         blueprint_compat = false,
         rarity = 3,
@@ -688,7 +584,7 @@ if Lotus.config.lot_add_jokers then
             local caught = false
             if not context.blueprint and context.cardarea == G.jokers and context.before == true and not context.debuffed_hand then
                 for i=1, #context.scoring_hand do
-                    if context.scoring_hand[i].edition == nil and (pseudorandom('lot_fisher') < G.GAME.probabilities.normal / card.ability.extra.odds or G.GAME.dollars > 1e99) then
+                    if context.scoring_hand[i].edition == nil and (pseudorandom("fisher") < G.GAME.probabilities.normal / card.ability.extra.odds or G.GAME.dollars > 1e99) then
                         caught = true
                         G.E_MANAGER:add_event(Event({
                             func = function() 
@@ -709,14 +605,8 @@ if Lotus.config.lot_add_jokers then
     }
 
     SMODS.Joker {
-        key = 'lot_savant',
-        name = 'lot_savant',
-        loc_txt = {
-          name = 'Savant',
-          text = {
-            "{C:purple}+#1#{} consumable slot",
-          }
-        },
+        key = "savant",
+        name = "savant",
         config = { extra = { consumable = 1 } },
         blueprint_compat = false,
         rarity = 1,
@@ -735,16 +625,8 @@ if Lotus.config.lot_add_jokers then
       }
 
     SMODS.Joker {
-        key = "lot_stash",
-        name = "lot_stash",
-        loc_txt = {
-            name = "Mag's Stash",
-            text = {
-                "Gains {X:mult,C:white} X#1# {} Mult for",
-                "every redeemed {C:red}Voucher{}",
-                "{C:inactive}(Currently {X:mult,C:white} X#2# {} Mult)"
-            }
-        },
+        key = "stash",
+        name = "stash",
         config = {extra = {x_mult = 1, add_Xmult = 0.5}},
         blueprint_compat = true,
         rarity = 3,
