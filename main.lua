@@ -169,13 +169,12 @@ Lotus.config_tab = function()
     }
 end
 
-local function hi_funnyman(self)
-    local old_hand = self.ability.extra.poker_hand
+local function rnd_new_hand(exclude, key)
     local _poker_hands = {}
     for k, v in pairs(G.GAME.hands) do
-        if v.visible and v ~= old_hand then _poker_hands[#_poker_hands+1] = k end
+        if v.visible and v ~= exclude then _poker_hands[#_poker_hands+1] = k end
     end
-    self.ability.extra.poker_hand = pseudorandom_element(_poker_hands, pseudoseed((self.area and self.area.config.type == 'title') and 'false_funnyman' or 'funnyman'))
+    return pseudorandom_element(_poker_hands, pseudoseed(key))
 end
 
 -- new jokers
@@ -214,11 +213,11 @@ if Lotus.config.lot_add_jokers then
                 }
             end
             if context.end_of_round and not context.repetition and not context.individual then
-               hi_funnyman(card) 
+                card.ability.extra.poker_hand = rnd_new_hand(card.ability.extra.poker_hand, (self.area and self.area.config.type == 'title') and 'false_funnyman' or 'funnyman')
             end
         end,
         set_ability = function(self, card, initial, delay_sprites)
-            hi_funnyman(card)
+            card.ability.extra.poker_hand = rnd_new_hand(nil, (self.area and self.area.config.type == 'title') and 'false_funnyman' or 'funnyman')
         end
     }
 
@@ -331,9 +330,7 @@ if Lotus.config.lot_add_jokers then
         pos = {x = 4, y = 1},
         cost = 5,
         loc_vars = function(self, info_queue, card)
-            return {
-                vars = {card.ability.extra.mult, card.ability.extra.add_mult}
-            }
+            return {vars = {card.ability.extra.mult, card.ability.extra.add_mult}}
         end,
         calculate = function(self, card, context)
             if context.end_of_round and not context.repetition and not context.individual then
