@@ -296,7 +296,16 @@ if Lotus.config.lot_add_jokers then
             if context.end_of_round and not context.repetition and not context.individual then
                 if G.GAME.blind.boss then
                     if #G.consumeables.cards < G.consumeables.config.card_limit then
-                        SMODS.create_card {set = "Spectral"}
+                        G.E_MANAGER:add_event(Event({
+                            func = function()
+                                card:juice_up()
+                                local spectral = SMODS.create_card {set = "Spectral"}
+                                spectral:add_to_deck()
+                                G.consumeables:emplace(spectral)
+                                return true
+                            end
+                        }))
+                        
                     end
                 end
             end
@@ -406,8 +415,8 @@ if Lotus.config.lot_add_jokers then
         loc_txt = {
             name = "Road Sign",
             text = {
-                "{C:purple}Arcana Packs{} in the",
-                "shop are {C:money}free{}",
+                "{C:purple}Arcana Packs{} and {C:purple}Tarot Cards{}",
+                "in the shop are {C:money}free{}",
             }
         },
         blueprint_compat = false,
