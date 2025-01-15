@@ -251,7 +251,7 @@ if Lotus.config.lot_add_jokers then
             }
         },
         blueprint_compat = true,
-        config = {extra = {Xmult = 4}},
+        config = {extra = {x_mult = 4}},
         no_pool_flag = 'lot_mimic_inactive',
         rarity = 2,
         atlas = "LJkr",
@@ -259,14 +259,14 @@ if Lotus.config.lot_add_jokers then
         cost = 6,
         loc_vars = function(self, info_queue, card)
             return {
-                vars = {card.ability.extra.Xmult}
+                vars = {card.ability.extra.x_mult}
             }
         end,
         calculate = function(self, card, context)
             if context.joker_main then
                 return {
-                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult = card.ability.extra.Xmult
+                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.x_mult } },
+                    x_mult = card.ability.extra.x_mult
                 }
             end
         end
@@ -316,7 +316,7 @@ if Lotus.config.lot_add_jokers then
             }
         },
         config = {extra = {
-            Xmult = 5,
+            x_mult = 5,
             req_hands = 30,
             cur_hands = 0
         }},
@@ -327,7 +327,7 @@ if Lotus.config.lot_add_jokers then
         cost = 9,
         loc_vars = function(self, info_queue, card)
             return {vars = {
-                card.ability.extra.Xmult,
+                card.ability.extra.x_mult,
                 card.ability.extra.req_hands,
                 (card.ability.extra.cur_hands >= card.ability.extra.req_hands) and "Active!" or card.ability.extra.cur_hands.."/"..card.ability.extra.req_hands
             }}
@@ -344,8 +344,8 @@ if Lotus.config.lot_add_jokers then
 
             if context.joker_main and card.ability.extra.cur_hands >= card.ability.extra.req_hands then
                 return {
-                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult = card.ability.extra.Xmult
+                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.x_mult } },
+                    x_mult = card.ability.extra.x_mult
                 }
             end
         end
@@ -742,10 +742,10 @@ if Lotus.config.lot_add_jokers then
             }
         },
         blueprint_compat = true,
-        config = {extra = {Xmult = 1, add_Xmult = 0.5}},
+        config = {extra = {x_mult = 1, add_Xmult = 0.5}},
         loc_vars = function(self, info_queue, card)
             return {
-                vars = {card.ability.extra.add_Xmult, card.ability.extra.Xmult}
+                vars = {card.ability.extra.add_Xmult, card.ability.extra.x_mult}
             }
         end,
         rarity = 3,
@@ -755,8 +755,8 @@ if Lotus.config.lot_add_jokers then
         calculate = function(self, card, context)
             if context.joker_main then
                 return {
-                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                    Xmult = card.ability.extra.Xmult
+                    message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.x_mult } },
+                    x_mult = card.ability.extra.x_mult
                 }
             end
         end,
@@ -766,7 +766,7 @@ if Lotus.config.lot_add_jokers then
                 for _,v in pairs(G.GAME.used_vouchers) do
                     if v then amt = amt + 1 end
                 end
-                card.ability.extra.Xmult = 1 + (amt * card.ability.extra.add_Xmult)
+                card.ability.extra.x_mult = 1 + (amt * card.ability.extra.add_Xmult)
             end
         end
     }
