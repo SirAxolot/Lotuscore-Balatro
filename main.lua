@@ -169,6 +169,45 @@ Lotus.config_tab = function()
     }
 end
 
+-- directly copied from balatro's flower pot code. its a mess. not my fault. sorry
+local function flower_pot_logic(context)
+    local suits = {
+        ['Hearts'] = 0,
+        ['Diamonds'] = 0,
+        ['Spades'] = 0,
+        ['Clubs'] = 0
+    }
+    for i = 1, #context.scoring_hand do
+        if not SMODS.has_any_suit(context.scoring_hand[i]) then
+            if context.scoring_hand[i]:is_suit('Hearts', true) and suits["Hearts"] == 0 then suits["Hearts"] = suits["Hearts"] + 1
+            elseif context.scoring_hand[i]:is_suit('Diamonds', true) and suits["Diamonds"] == 0  then suits["Diamonds"] = suits["Diamonds"] + 1
+            elseif context.scoring_hand[i]:is_suit('Spades', true) and suits["Spades"] == 0  then suits["Spades"] = suits["Spades"] + 1
+            elseif context.scoring_hand[i]:is_suit('Clubs', true) and suits["Clubs"] == 0  then suits["Clubs"] = suits["Clubs"] + 1 end
+        end
+    end
+    for i = 1, #context.scoring_hand do
+        if SMODS.has_any_suit(context.scoring_hand[i]) then
+            if context.scoring_hand[i]:is_suit('Hearts') and suits["Hearts"] == 0 then suits["Hearts"] = suits["Hearts"] + 1
+            elseif context.scoring_hand[i]:is_suit('Diamonds') and suits["Diamonds"] == 0  then suits["Diamonds"] = suits["Diamonds"] + 1
+            elseif context.scoring_hand[i]:is_suit('Spades') and suits["Spades"] == 0  then suits["Spades"] = suits["Spades"] + 1
+            elseif context.scoring_hand[i]:is_suit('Clubs') and suits["Clubs"] == 0  then suits["Clubs"] = suits["Clubs"] + 1 end
+        end
+    end
+    return suits["Hearts"] > 0 and
+    suits["Diamonds"] > 0 and
+    suits["Spades"] > 0 and
+    suits["Clubs"] > 0
+end
+
+local function ezjuice(c)
+    G.E_MANAGER:add_event(Event({
+        func = function()
+            c:juice_up()
+            return true
+        end
+    }))
+end
+
 local function rnd_new_hand(exclude, key)
     local _poker_hands = {}
     for k, v in pairs(G.GAME.hands) do
@@ -236,7 +275,7 @@ if Lotus.config.lot_add_jokers then
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 1, y = 0},
-        cost = 6,
+        cost = 7,
         loc_vars = function(self, info_queue, card)
             info_queue[#info_queue + 1] = G.P_CENTERS.j_joker
             return {
@@ -265,21 +304,17 @@ if Lotus.config.lot_add_jokers then
             return {vars = {}}
         end,
         calculate = function(self, card, context)
-            if context.end_of_round and not context.repetition and not context.individual then
-                if G.GAME.blind.boss then
-                    if #G.consumeables.cards < G.consumeables.config.card_limit then
-                        G.E_MANAGER:add_event(Event({
-                            func = function()
-                                card:juice_up()
-                                local spectral = SMODS.create_card {set = "Spectral"}
-                                spectral:add_to_deck()
-                                G.consumeables:emplace(spectral)
-                                return true
-                            end
-                        }))
-                        
+            if context.joker_main and not context.blueprint and flower_pot_logic(context) and #G.consumeables.cards < G.consumeables.config.card_limit then
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        card:juice_up()
+                        local spectral = SMODS.create_card {set = "Spectral"}
+                        spectral:add_to_deck()
+                        G.consumeables:emplace(spectral)
+                        return true
                     end
-                end
+                }))
+                
             end
         end
     }
@@ -287,7 +322,7 @@ if Lotus.config.lot_add_jokers then
     SMODS.Joker {
         key = "lockpick",
         name = "lockpick",
-        config = {extra = {x_mult = 5, req_hands = 30, cur_hands = 0}},
+        config = {extra = {x_mult = 5, req_rounds = 6, cur_rounds = 0}},
         blueprint_compat = true,
         rarity = 3,
         atlas = "LJkr",
@@ -296,21 +331,21 @@ if Lotus.config.lot_add_jokers then
         loc_vars = function(self, info_queue, card)
             return {vars = {
                 card.ability.extra.x_mult,
-                card.ability.extra.req_hands,
-                (card.ability.extra.cur_hands >= card.ability.extra.req_hands) and "Active!" or card.ability.extra.cur_hands.."/"..card.ability.extra.req_hands
+                card.ability.extra.req_rounds,
+                (card.ability.extra.cur_rounds >= card.ability.extra.req_rounds) and "Active!" or card.ability.extra.cur_rounds.."/"..card.ability.extra.req_rounds
             }}
         end,
         calculate = function(self, card, context)
-            if context.cardarea == G.jokers and context.after and not context.repetition and not context.individual then
-                card.ability.extra.cur_hands = card.ability.extra.cur_hands + 1
-                if card.ability.extra.cur_hands < card.ability.extra.req_hands then
-                    return {message = ""..card.ability.extra.cur_hands}
-                elseif card.ability.extra.cur_hands == card.ability.extra.req_hands then
+            if context.end_of_round and not context.repetition and not context.individual then
+                card.ability.extra.cur_rounds = card.ability.extra.cur_rounds + 1
+                if card.ability.extra.cur_rounds < card.ability.extra.req_rounds then
+                    return {message = ""..card.ability.extra.cur_rounds} -- if its not a string then it immediately crashes #awesome
+                elseif card.ability.extra.cur_rounds == card.ability.extra.req_rounds then
                     return {message = "Active!"}
                 end
             end
 
-            if context.joker_main and card.ability.extra.cur_hands >= card.ability.extra.req_hands then
+            if context.joker_main and card.ability.extra.cur_rounds >= card.ability.extra.req_rounds then
                 return {
                     message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.x_mult } },
                     x_mult = card.ability.extra.x_mult
@@ -323,7 +358,7 @@ if Lotus.config.lot_add_jokers then
     SMODS.Joker {
         key = "floppy_disk",
         name = "floppy_disk",
-        config = {extra = {mult = 1, add_mult = 2}},
+        config = {extra = {mult = 2, add_mult = 1}},
         blueprint_compat = true,
         rarity = 1,
         atlas = "LJkr",
@@ -343,12 +378,7 @@ if Lotus.config.lot_add_jokers then
                 end
             end
             if context.individual and context.cardarea == G.play then
-                G.E_MANAGER:add_event(Event({
-                    func = function()
-                        card:juice_up()
-                        return true
-                    end
-                }))
+                ezjuice(card)
                 return {
                     mult = card.ability.extra.mult,
                     card = context.other_card
@@ -412,7 +442,7 @@ if Lotus.config.lot_add_jokers then
                 and (context.scoring_hand[1]:get_id() == context.scoring_hand[#context.scoring_hand]:get_id()) -- are the first and last card the same rank?
                 then return { 
                         message = 'Again!',
-                        repetitions = 1,
+                        repetitions = 2,
                         card = card
                     }
             end
@@ -462,12 +492,7 @@ if Lotus.config.lot_add_jokers then
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.hand and context.individual and not context.end_of_round then
-                G.E_MANAGER:add_event(Event({
-                    func = function()
-                        card:juice_up()
-                        return true
-                    end
-                }))
+                ezjuice(card)
                 if context.other_card.debuff then
                     return {
                         message = localize('k_debuffed'),
@@ -624,7 +649,7 @@ if Lotus.config.lot_add_jokers then
     SMODS.Joker {
         key = "stash",
         name = "stash",
-        config = {extra = {x_mult = 1, add_Xmult = 0.5}},
+        config = {extra = {x_mult = 1, add_Xmult = 0.35}},
         blueprint_compat = true,
         rarity = 3,
         atlas = "LJkr",
