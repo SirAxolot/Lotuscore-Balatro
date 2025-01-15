@@ -184,7 +184,7 @@ end
 if Lotus.config.lot_add_jokers then
     SMODS.Joker {
         key = "lot_funnyman",
-        name = "Funnyman",
+        name = "lot_funnyman",
         loc_txt = {
             name = "Funnyman",
             text = {
@@ -242,6 +242,7 @@ if Lotus.config.lot_add_jokers then
 
     SMODS.Joker {
         key = "lot_mimic",
+        name = "lot_mimic",
         loc_txt = {
             name = "Mimic",
             text = {
@@ -250,8 +251,8 @@ if Lotus.config.lot_add_jokers then
                 "{C:money}"..(Lotus.config.lot_text_replace and "Lotus" or "Joker").."{C:inactive} at any point in this run){}"
             }
         },
-        blueprint_compat = true,
         config = {extra = {x_mult = 4}},
+        blueprint_compat = true,
         no_pool_flag = 'lot_mimic_inactive',
         rarity = 2,
         atlas = "LJkr",
@@ -284,7 +285,6 @@ if Lotus.config.lot_add_jokers then
             }
         },
         blueprint_compat = false,
-        config = {extra = {}},
         rarity = 3,
         atlas = "LJkr",
         pos = {x = 9, y = 0},
@@ -324,11 +324,7 @@ if Lotus.config.lot_add_jokers then
                 "{C:inactive}(#3#){}",
             }
         },
-        config = {extra = {
-            x_mult = 5,
-            req_hands = 30,
-            cur_hands = 0
-        }},
+        config = {extra = {x_mult = 5, req_hands = 30, cur_hands = 0}},
         blueprint_compat = true,
         rarity = 3,
         atlas = "LJkr",
@@ -373,8 +369,8 @@ if Lotus.config.lot_add_jokers then
                 "Boss Blind is defeated"
             }
         },
-        blueprint_compat = true,
         config = {extra = {mult = 1, add_mult = 2}},
+        blueprint_compat = true,
         rarity = 1,
         atlas = "LJkr",
         pos = {x = 4, y = 1},
@@ -420,7 +416,6 @@ if Lotus.config.lot_add_jokers then
             }
         },
         blueprint_compat = false,
-        config = {extra = {}},
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 1, y = 1},
@@ -447,7 +442,6 @@ if Lotus.config.lot_add_jokers then
             }
         },
         blueprint_compat = false,
-        config = {extra = {}},
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 3, y = 1},
@@ -506,8 +500,8 @@ if Lotus.config.lot_add_jokers then
                 "retrigger each played card",
             }
         },
-        blueprint_compat = true,
         config = {extra = {odds = 2}},
+        blueprint_compat = true,
         rarity = 2,
         atlas = "LJkr",
         pos = {x = 7, y = 0},
@@ -540,8 +534,8 @@ if Lotus.config.lot_add_jokers then
                 "gives {C:blue}+#1#{} Chips",
             }
         },
-        blueprint_compat = true,
         config = {extra = {chips = 15}},
+        blueprint_compat = true,
         rarity = 1,
         atlas = "LJkr",
         pos = {x = 8, y = 0},
@@ -587,6 +581,12 @@ if Lotus.config.lot_add_jokers then
             }
         },
         config = {extra = {mult = 10}},
+        blueprint_compat = true,
+        soul_pos = {x = 5, y = 0},
+        rarity = 2,
+        atlas = "LJkr",
+        pos = {x = 4, y = 0},
+        cost = 7,
         loc_vars = function(self, info_queue, card)
             
             info_queue[#info_queue + 1] = G.P_CENTERS.m_stone
@@ -594,12 +594,6 @@ if Lotus.config.lot_add_jokers then
                 vars = {card.ability.extra.mult}
             }
         end,
-        blueprint_compat = true,
-        soul_pos = {x = 5, y = 0},
-        rarity = 2,
-        atlas = "LJkr",
-        pos = {x = 4, y = 0},
-        cost = 7,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.individual then
                 if context.other_card.ability.effect == 'Stone Card' then
@@ -622,17 +616,17 @@ if Lotus.config.lot_add_jokers then
                 "Decreases by {C:mult}-$#2#{} each round"
             }
         },
-        blueprint_compat = false,
         config = {extra = {init_money = 8, money = 8, sub = 2}},
+        blueprint_compat = false,
+        rarity = 1,
+        atlas = "LJkr",
+        pos = {x = 3, y = 0},
+        cost = 5,
         loc_vars = function(self, info_queue, card)
             return {
                 vars = {card.ability.extra.money, card.ability.extra.sub}
             }
         end,
-        rarity = 1,
-        atlas = "LJkr",
-        pos = {x = 3, y = 0},
-        cost = 5,
         calc_dollar_bonus = function(self, card)
             local bonus = card.ability.extra.money
             card.ability.extra.money = card.ability.extra.money - card.ability.extra.sub
@@ -662,7 +656,7 @@ if Lotus.config.lot_add_jokers then
                     { message = "Emptied!" })
             end
             if bonus > 0 then return bonus end
-          end
+        end
     }
 
     SMODS.Joker {
@@ -676,8 +670,12 @@ if Lotus.config.lot_add_jokers then
                 "to each scoring card."
             }
         },
-        blueprint_compat = false,
         config = {extra = {odds = 100}},
+        blueprint_compat = false,
+        rarity = 3,
+        atlas = "LJkr",
+        pos = {x = 6, y = 0},
+        cost = 7,
         loc_vars = function(self, info_queue, card)
             info_queue[#info_queue + 1] = G.P_CENTERS.e_foil
             info_queue[#info_queue + 1] = G.P_CENTERS.e_holo
@@ -686,10 +684,6 @@ if Lotus.config.lot_add_jokers then
                 vars = {(G.GAME.probabilities.normal or 1), card.ability.extra.odds}
             }
         end,
-        rarity = 3,
-        atlas = "LJkr",
-        pos = {x = 6, y = 0},
-        cost = 7,
         calculate = function(self, card, context)
             local caught = false
             if not context.blueprint and context.cardarea == G.jokers and context.before == true and not context.debuffed_hand then
@@ -716,14 +710,15 @@ if Lotus.config.lot_add_jokers then
 
     SMODS.Joker {
         key = 'lot_savant',
+        name = 'lot_savant',
         loc_txt = {
           name = 'Savant',
           text = {
             "{C:purple}+#1#{} consumable slot",
           }
         },
-        blueprint_compat = false,
         config = { extra = { consumable = 1 } },
+        blueprint_compat = false,
         rarity = 1,
         atlas = 'LJkr',
         pos = { x = 5, y = 1 },
@@ -750,17 +745,17 @@ if Lotus.config.lot_add_jokers then
                 "{C:inactive}(Currently {X:mult,C:white} X#2# {} Mult)"
             }
         },
-        blueprint_compat = true,
         config = {extra = {x_mult = 1, add_Xmult = 0.5}},
+        blueprint_compat = true,
+        rarity = 3,
+        atlas = "LJkr",
+        pos = {x = 2, y = 1},
+        cost = 9,
         loc_vars = function(self, info_queue, card)
             return {
                 vars = {card.ability.extra.add_Xmult, card.ability.extra.x_mult}
             }
         end,
-        rarity = 3,
-        atlas = "LJkr",
-        pos = {x = 2, y = 1},
-        cost = 9,
         calculate = function(self, card, context)
             if context.joker_main then
                 return {
