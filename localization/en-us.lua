@@ -31,7 +31,8 @@ return {
                 name = "I'm a Fork",
                 text = {
                     "Creates a {C:blue}Spectral Card{}",
-                    "when {C:money}Boss Blind{} is defeated",
+                    "if played hand contains a {C:diamonds}Diamond{} card,",
+                    "a {C:spades}Spade{} card, a {C:hearts}Heart{} card, and a {C:clubs}Club{} card",
                     "{C:inactive}(Must have room){}"
                 }
             },

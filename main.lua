@@ -698,6 +698,17 @@ if Lotus.config.lot_add_jokers then
         return gchxm(self)
     end
 
+    local geore = Card.get_end_of_round_effect
+    Card.get_end_of_round_effect = function(self, context)
+        local base = geore(self, context)
+        if G.GAME.modifiers.lot_whiteboard_active ~= nil and G.GAME.modifiers.lot_whiteboard_active > 0 then
+            if self.ability.name == "Steel Card" and not self.debuff then
+                base.h_dollars = (base.h_dollars or 0) + G.P_CENTERS.m_gold.config.h_x_mult
+            end
+        end
+        return base
+    end
+
     local she = SMODS.has_enhancement
     SMODS.has_enhancement = function (card, type)
         if card.name == nil then return false end
